@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+  run:
+    cmds:
+      - cargo run -- --contract-class ./test_data/os_input.json
+        --program-input ./test_data/contract_inputs.json
+        --os ./test_data/os.json
+  

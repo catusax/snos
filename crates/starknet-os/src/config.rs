@@ -24,7 +24,7 @@ pub fn default_layout() -> LayoutName {
 // https://github.com/starkware-libs/blockifier/blob/8da582b285bfbc7d4c21178609bbd43f80a69240/crates/native_blockifier/src/py_block_executor.rs#L44
 const MAX_STEPS_PER_TX: u32 = 4_000_000;
 
-pub const DEFAULT_COMPILED_OS: &[u8] = include_bytes!("../../../build/os_latest.json");
+pub const DEFAULT_COMPILED_OS: &[u8] = include_bytes!("/Users/coolrc/sourcecode222/snos/crates/starknet-os/src/lib.rs");
 
 const DEFAULT_CONFIG_PATH: &str = "../../cairo-lang/src/starkware/starknet/definitions/general_config.yml";
 pub const STORED_BLOCK_HASH_BUFFER: u64 = 10;

@@ -16,7 +16,7 @@ use crate::hints::vars;
 use crate::io::input::StarknetOsInput;
 use crate::storage::storage::Storage;
 
-mod cairo_types;
+pub mod cairo_types;
 pub mod config;
 pub mod crypto;
 pub mod error;

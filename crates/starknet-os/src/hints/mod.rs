@@ -259,8 +259,8 @@ where
 {
     builtin_hint_proc: BuiltinHintProcessor,
     cairo1_builtin_hint_proc: Cairo1HintProcessor,
-    hints: HashMap<String, HintImpl>,
-    extensive_hints: HashMap<String, ExtensiveHintImpl>,
+    pub hints: HashMap<String, HintImpl>,
+    pub extensive_hints: HashMap<String, ExtensiveHintImpl>,
     run_resources: RunResources,
     _phantom: PhantomData<S>,
 }

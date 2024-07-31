@@ -1,0 +1,20 @@
+[package]
+name = "cairo-run"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+license-file.workspace = true
+
+[dependencies]
+starknet-os = { path = "../../starknet-os" }
+cairo-vm = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json.workspace = true
+blockifier = { workspace = true }
+log.workspace = true
+
+cairo-lang-starknet-classes = { workspace = true }
+indoc.workspace = true
+tokio.workspace = true
