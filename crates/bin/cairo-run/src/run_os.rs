@@ -33,7 +33,8 @@ where
     S: Storage + 'static,
 {
     // Init CairoRunConfig
-    let cairo_run_config = CairoRunConfig { layout, relocate_mem: true, trace_enabled: true, ..Default::default() };
+    let cairo_run_config =
+        CairoRunConfig { layout, relocate_mem: true, trace_enabled: true, proof_mode: true, ..Default::default() };
     let allow_missing_builtins = cairo_run_config.allow_missing_builtins.unwrap_or(false);
 
     // Load the Starknet OS Program
@@ -53,20 +54,20 @@ where
     let end = cairo_runner.initialize(allow_missing_builtins).map_err(|e| SnOsError::Runner(e.into()))?;
 
     // Setup Depsyscall Handler
-    // let deprecated_syscall_handler = DeprecatedOsSyscallHandlerWrapper::new(
-    //     execution_helper.clone(),
-    //     cairo_runner.vm.add_memory_segment(),
-    //     BlockInfo::create_for_testing(),
-    // );
+    let deprecated_syscall_handler =
+        starknet_os::execution::deprecated_syscall_handler::DeprecatedOsSyscallHandlerWrapper::new(
+            execution_helper.clone(),
+            cairo_runner.vm.add_memory_segment(),
+            blockifier::block::BlockInfo::create_for_testing(),
+        );
 
     let syscall_handler = OsSyscallHandlerWrapper::new(execution_helper.clone());
 
     // Setup Globals
     cairo_runner.exec_scopes.insert_value(vars::scopes::OS_INPUT, os_input);
     cairo_runner.exec_scopes.insert_value("contract_input", program_input);
-    // cairo_runner.exec_scopes.insert_value(vars::scopes::EXECUTION_HELPER, execution_helper);
-    // cairo_runner.exec_scopes.insert_value(vars::scopes::DEPRECATED_SYSCALL_HANDLER,
-    // deprecated_syscall_handler);
+    cairo_runner.exec_scopes.insert_value(vars::scopes::EXECUTION_HELPER, execution_helper);
+    cairo_runner.exec_scopes.insert_value(vars::scopes::DEPRECATED_SYSCALL_HANDLER, deprecated_syscall_handler);
     cairo_runner.exec_scopes.insert_value(vars::scopes::SYSCALL_HANDLER, syscall_handler);
     cairo_runner
         .exec_scopes

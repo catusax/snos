@@ -27,8 +27,8 @@ where
     S: Storage + 'static,
 {
     let mut processor = SnosHintProcessor::default();
-    // TODO: add hints
-    processor.hints.insert(LOAD_CLASS_FACTS.into(), do_nothing);
+
+    processor.hints.insert(LOAD_CLASS_FACTS.into(), load_compiled_class);
     processor.hints.insert(OS_LOAD_CONTRACT_DATA.into(), load_class_inner);
     processor.hints.insert(BYTECODE_NO_FOOTER_SET.into(), do_nothing);
     processor.hints.insert(BYTECODE_FOOTER_SET.into(), do_nothing);
@@ -47,6 +47,22 @@ pub const LOAD_CLASS_FACTS: &str = indoc! {r#"
     from core.objects import ContractBootloaderInput
     compiled_class = ContractBootloaderInput.Schema().load(program_input).compiled_class"#
 };
+
+pub fn load_compiled_class(
+    vm: &mut VirtualMachine,
+    exec_scopes: &mut ExecutionScopes,
+    ids_data: &HashMap<String, HintReference>,
+    ap_tracking: &ApTracking,
+    _constants: &HashMap<String, Felt252>,
+) -> Result<(), HintError> {
+    let os_input = exec_scopes.get::<StarknetOsInput>(vars::scopes::OS_INPUT)?;
+
+    let class = os_input.compiled_class;
+
+    exec_scopes.insert_value(vars::scopes::COMPILED_CLASS, class.clone()); //TODO: is this clone necessary?
+
+    Ok(())
+}
 
 pub fn do_nothing(
     vm: &mut VirtualMachine,
@@ -159,7 +175,6 @@ pub fn load_contract_arg(
 ) -> Result<(), HintError> {
     // this hint fills in a Cairo BigInt3 by taking a felt (ids.value) and passing it to a split fn
     let value = exec_scopes.get::<Vec<Felt252>>("contract_input")?;
-    println!("aaaa : {:#?}", value);
 
     let value: Vec<MaybeRelocatable> = value.into_iter().map(|v| MaybeRelocatable::from(v)).collect();
 
@@ -220,7 +235,8 @@ pub fn print1(
 
     let syscall_len_str = syscall_len.to_bytes_be();
 
-    let len = u32::from_be_bytes([syscall_len_str[0], syscall_len_str[1], syscall_len_str[2], syscall_len_str[3]]);
+    let len = u32::from_be_bytes([syscall_len_str[0], syscall_len_str[1], syscall_len_str[2],
+    syscall_len_str[3]]);
 
     for i in 0..len {
         let syscall_value = vm.get_integer((syscall_ptr + i)?)?;

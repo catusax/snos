@@ -48,9 +48,22 @@ fn main() {
     );
 
     println!("Running OS...");
-    println!("{:#?}", contract_input.to_felt());
+    // println!("{:#?}", contract_input.to_felt());
 
-    run_os::run_os(&compiled_os, LayoutName::starknet_with_keccak, os_input, contract_input.to_felt(), execution_helper).unwrap();
+    match run_os::run_os(
+        &compiled_os,
+        LayoutName::starknet_with_keccak,
+        os_input,
+        contract_input.to_felt(),
+        execution_helper,
+    ) {
+        Ok((_pie, output)) => {
+            println!("Output: {:#?}", output);
+        }
+        Err(e) => {
+            println!("Error: {:#?}", e);
+        }
+    };
 }
 
 #[derive(Debug, Deserialize)]
